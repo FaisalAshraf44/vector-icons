@@ -5,6 +5,7 @@ export const FA5Style = {
     light: 'light',
     solid: 'solid',
     brand: 'brand',
+    duotone: 'duotone'
 };
 export function createFA5iconSet(glyphMap, metadata = {}, fonts, pro = false) {
     const metadataKeys = Object.keys(metadata);
@@ -42,11 +43,13 @@ export function createFA5iconSet(glyphMap, metadata = {}, fonts, pro = false) {
     const lightIcons = createFontAwesomeStyle('Light', '100');
     const regularIcons = createFontAwesomeStyle('Regular', '400');
     const solidIcons = createFontAwesomeStyle('Solid', '700');
+    const duotoneIcons = createFontAwesomeStyle('Duotone', '900');
     const Icon = createMultiStyleIconSet({
         brand: brandIcons,
         light: lightIcons,
         regular: regularIcons,
         solid: solidIcons,
+        duotone: duotoneIcons,
     }, {
         defaultStyle: 'regular',
         fallbackFamily,
