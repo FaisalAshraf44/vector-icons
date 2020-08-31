@@ -42,7 +42,7 @@ export default function createStackedIconSet(...iconSets) {
             {iconComponents.map((IconComponent, i) => (
               <IconComponent
                 key={i} // eslint-disable-line react/no-array-index-key
-                color={colors[i] || 'black'}
+                color={resolvedColors[i] || 'black'}
                 style={[style, i > 0 ? StyleSheet.absoluteFill : undefined]}
                 {...props}
               />
