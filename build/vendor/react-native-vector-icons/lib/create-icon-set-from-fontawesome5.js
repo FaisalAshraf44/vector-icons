@@ -1,3 +1,5 @@
+import createStackedIconSet from './create-stacked-icon-set';
+import createIconSetWithStyle from './create-icon-set-with-style';
 import createMultiStyleIconSet from './create-multi-style-icon-set';
 
 const FA5Style = {
@@ -5,6 +7,7 @@ const FA5Style = {
   light: 'light',
   solid: 'solid',
   brand: 'brand',
+  duotone: 'duotone',
 };
 
 function createFA5iconSet(glyphMap, metadata = {}, pro = false) {
@@ -28,36 +31,75 @@ function createFA5iconSet(glyphMap, metadata = {}, pro = false) {
     return metadata[family].indexOf(glyph) !== -1;
   }
 
-  function createFontAwesomeStyle(styleName, fontWeight, family = fontFamily) {
+  function createFontAwesomeIconSet(inputOptions) {
+    const { fontWeight, style, family, styleGlyphMap } = {
+      styleGlyphMap: glyphMap,
+      family: fontFamily,
+      ...inputOptions,
+    };
+
+    let styleName = style;
     let fontFile = `FontAwesome5_${pro ? `Pro_${styleName}` : styleName}.ttf`;
 
     if (styleName === 'Brands') {
       fontFile = 'FontAwesome5_Brands.ttf';
+    } else if (styleName === 'Duotone') {
+      styleName = 'Solid';
+      fontFile = 'FontAwesome5_Duotone.ttf';
     }
 
-    return {
+    return createIconSetWithStyle({
       fontFamily: `${family}-${styleName}`,
       fontFile,
-      fontStyle: {
-        fontWeight,
-      },
-      glyphMap,
-    };
+      fontStyle: Platform.select({
+        default: {},
+        ios: { fontWeight },
+      }),
+      glyphMap: styleGlyphMap,
+    });
   }
 
-  const brandIcons = createFontAwesomeStyle(
-    'Regular',
-    '400',
-    'FontAwesome5Brands',
+  const brandIcons = createFontAwesomeIconSet({
+    style: 'Brands',
+    fontWeight: '400',
+    family: 'FontAwesome5Brands',
+  });
+  const lightIcons = createFontAwesomeIconSet({
+    style: 'Light',
+    fontWeight: '300',
+  });
+  const regularIcons = createFontAwesomeIconSet({
+    style: 'Regular',
+    fontWeight: '400',
+  });
+  const solidIcons = createFontAwesomeIconSet({
+    style: 'Solid',
+    fontWeight: '900',
+  });
+
+  const duotoneIcons = createStackedIconSet(
+    createFontAwesomeIconSet({
+      style: 'Duotone',
+      fontWeight: '900',
+      family: 'FontAwesome5Duotone',
+    }),
+    createFontAwesomeIconSet({
+      style: 'Duotone',
+      fontWeight: '900',
+      family: 'FontAwesome5Duotone',
+      styleGlyphMap: Object.keys(glyphMap).reduce((acc, key) => {
+        acc[key] = glyphMap[key] + 0x100000;
+        return acc;
+      }, {}),
+    })
   );
-  const lightIcons = createFontAwesomeStyle('Light', '100');
-  const regularIcons = createFontAwesomeStyle('Regular', '400');
-  const solidIcons = createFontAwesomeStyle('Solid', '700');
+
   const Icon = createMultiStyleIconSet(
     {
       brand: brandIcons,
       light: lightIcons,
       regular: regularIcons,
+      duotone: duotoneIcons,
       solid: solidIcons,
     },
     {

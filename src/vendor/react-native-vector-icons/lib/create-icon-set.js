@@ -1,6 +1,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { NativeModules, Platform, PixelRatio, processColor, Text } from 'react-native';
+import {
+  NativeModules,
+  Platform,
+  PixelRatio,
+  processColor,
+  Text,
+} from './react-native';
+import 'string.fromcodepoint';
 
 import ensureNativeModuleAvailable from './ensure-native-module-available';
 import createIconButtonComponent from './icon-button';
@@ -30,6 +37,16 @@ export default function createIconSet(
     web: fontBasename,
     default: fontFamily,
   });
+
+  function resolveGlyph(name) {
+    const glyph = name ? glyphMap[name] || '?' : '';
+
+    if (typeof glyph === 'number') {
+      return String.fromCodePoint(glyph);
+    }
+
+    return glyph;
+  }
 
   const IconNamePropType = PropTypes.oneOf(Object.keys(glyphMap));
 
@@ -63,11 +80,6 @@ export default function createIconSet(
     render() {
       const { name, size, color, style, children, ...props } = this.props;
 
-      let glyph = name ? glyphMap[name] || '?' : '';
-      if (typeof glyph === 'number') {
-        glyph = String.fromCharCode(glyph);
-      }
-
       const styleDefaults = {
         fontSize: size,
         color,
@@ -84,7 +96,7 @@ export default function createIconSet(
 
       return (
         <Text {...props}>
-          {glyph}
+          {resolveGlyph(name)}
           {children}
         </Text>
       );
