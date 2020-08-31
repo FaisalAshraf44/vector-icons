@@ -28,7 +28,14 @@ export default function createStackedIconSet(...iconSets) {
       };
 
       render() {
-        const { colors, style, ...props } = this.props;
+        const { color, colors, style, ...props } = this.props;
+
+        let resolvedColors;
+        if(colors.length == 0 && color) {
+          resolvedColors = [color, `${color}80`];
+        } else {
+          resolvedColors = colors;
+        }
 
         return (
           <View>

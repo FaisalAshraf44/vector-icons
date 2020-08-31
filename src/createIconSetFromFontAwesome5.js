@@ -10,7 +10,7 @@ const FA5Style = {
   duotone: 'duotone',
 };
 
-function createFA5iconSet(glyphMap, metadata = {}, pro = false) {
+function createFA5iconSet(glyphMap, metadata = {}, fonts, pro = false) {
   const metadataKeys = Object.keys(metadata);
   const fontFamily = `FontAwesome5${pro ? 'Pro' : 'Free'}`;
 
@@ -39,13 +39,9 @@ function createFA5iconSet(glyphMap, metadata = {}, pro = false) {
     };
 
     let styleName = style;
-    let fontFile = `FontAwesome5_${pro ? `Pro_${styleName}` : styleName}.ttf`;
-
-    if (styleName === 'Brands') {
-      fontFile = 'FontAwesome5_Brands.ttf';
-    } else if (styleName === 'Duotone') {
+    let fontFile = fonts[styleName];
+    if (styleName === 'Duotone') {
       styleName = 'Solid';
-      fontFile = 'FontAwesome5_Duotone.ttf';
     }
 
     return createIconSetWithStyle({
