@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-import { StyleSheet, View } from './react-native';
+import { StyleSheet, View } from 'react-native';
 
 export default function createStackedIconSet(...iconSets) {
   function createStackedIconClass(selectClass = '') {
