@@ -1,3 +1,4 @@
+import { Platform } from "react-native"; 
 import createStackedIconSet from './createStackedIconSet';
 import createIconSetWithStyle from './createIconSetWithStyle';
 import createMultiStyleIconSet from './createMultiStyleIconSet';
