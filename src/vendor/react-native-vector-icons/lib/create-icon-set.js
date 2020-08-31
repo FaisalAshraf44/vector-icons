@@ -6,7 +6,7 @@ import {
   PixelRatio,
   processColor,
   Text,
-} from './react-native';
+} from 'react-native';
 import 'string.fromcodepoint';
 
 import ensureNativeModuleAvailable from './ensure-native-module-available';
