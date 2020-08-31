@@ -1,24 +1,10 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-import createIconSet from './createIconSet';
+import { DEFAULT_ICON_COLOR, DEFAULT_ICON_SIZE } from './createIconSet';
 
-type FontStyle = {
-  fontFamily: string;
-  fontFile: any;
-  glyphMap: any;
-  fontStyle: any;
-};
-
-type FontStyles = {
-  [key: string]: FontStyle;
-};
-
-export default function createMultiStyleIconSet(
-  styles: FontStyles,
-  optionsInput = {}
-): any {
-  const styleNames = Object.keys(styles);
+export default function createMultiStyleIconSet(iconSets, optionsInput = {}) {
+  const styleNames = Object.keys(iconSets);
 
   if (styleNames.length === 0) {
     throw new Error('You need to add at least one style');
@@ -26,23 +12,10 @@ export default function createMultiStyleIconSet(
 
   const options = {
     defaultStyle: styleNames[0],
-    fallbackFamily: (_unused: any) => styleNames[0],
-    glyphValidator: (_unused: any, __unused: any) => true,
+    fallbackFamily: () => styleNames[0],
+    glyphValidator: () => true,
     ...optionsInput,
   };
-
-  const iconSets = styleNames.reduce((acc, name) => {
-    const style = styles[name];
-
-    acc[name] = createIconSet(
-      style.glyphMap || {},
-      style.fontFamily || '',
-      style.fontFile || '',
-      style.fontStyle || {}
-    );
-
-    return acc;
-  }, {});
 
   function styleFromProps(props) {
     return Object.keys(props).reduce(
@@ -50,7 +23,7 @@ export default function createMultiStyleIconSet(
         styleNames.indexOf(propName) !== -1 && props[propName] === true
           ? propName
           : result,
-      options.defaultStyle
+      options.defaultStyle,
     );
   }
 
@@ -93,6 +66,24 @@ export default function createMultiStyleIconSet(
       : getIconSetForProps({ name, [style]: true });
   }
 
+  function getImageSource(
+    name,
+    size = DEFAULT_ICON_SIZE,
+    color = DEFAULT_ICON_COLOR,
+    style = options.defaultStyle,
+  ) {
+    return getStyledIconSet(style, name).getImageSource(name, size, color);
+  }
+
+  function getImageSourceSync(
+    name,
+    size = DEFAULT_ICON_SIZE,
+    color = DEFAULT_ICON_COLOR,
+    style = options.defaultStyle
+  ) {
+    return getStyledIconSet(style, name).getImageSourceSync(name, size, color);
+  }
+
   function getFontFamily(style = options.defaultStyle) {
     return getStyledIconSet(style).getFontFamily();
   }
@@ -117,24 +108,12 @@ export default function createMultiStyleIconSet(
         return acc;
       }, {});
 
-      static font = Object.values(styles).reduce((acc, style) => {
-        acc[style.fontFamily] = style.fontFile;
-        return acc;
-      }, {});
-
-      static Button: any;
-
-      static StyledIconSet = getStyledIconSet;
-      static getFontFamily = getFontFamily;
-      static getRawGlyphMap = getRawGlyphMap;
-      static hasIcon = hasIcon;
-
       render() {
         const selectedIconSet = getIconSetForProps(this.props);
         const SelectedIconClass = selectIconClass(selectedIconSet, selectClass);
         const props = reduceProps(this.props);
 
-        return React.createElement(SelectedIconClass, props);
+        return <SelectedIconClass {...props} />;
       }
     }
 
@@ -143,5 +122,15 @@ export default function createMultiStyleIconSet(
 
   const Icon = createStyledIconClass();
   Icon.Button = createStyledIconClass('Button');
+  Icon.TabBarItem = createStyledIconClass('TabBarItem');
+  Icon.TabBarItemIOS = createStyledIconClass('TabBarItemIOS');
+  Icon.ToolbarAndroid = createStyledIconClass('ToolbarAndroid');
+  Icon.getStyledIconSet = getStyledIconSet;
+  Icon.getImageSource = getImageSource;
+  Icon.getImageSourceSync = getImageSourceSync;
+  Icon.getFontFamily = getFontFamily;
+  Icon.getRawGlyphMap = getRawGlyphMap;
+  Icon.hasIcon = hasIcon;
+
   return Icon;
 }
