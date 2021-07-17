@@ -2,11 +2,12 @@
 
 This library is a compatibility layer around [@oblador/react-native-vector-icons](https://github.com/oblador/react-native-vector-icons) to work with the Expo asset system. If you're using React Native without Expo, you have no need for this library -- carry on! (or maybe [check out Expo](https://expo.io/)).
 
-> 👀: this library does *not* provide access to react-native-vector-icon's `Icon.getImageSource()` function for generating images from icons at runtime ([for context on why, see this issue](https://github.com/expo/vector-icons/issues/26)). If you find yourself needing an icon in the form of an image rather than text, you should generate that image yourself and bundle it with your app.
+> 👀: this library does _not_ provide access to react-native-vector-icon's `Icon.getImageSource()` function for generating images from icons at runtime ([for context on why, see this issue](https://github.com/expo/vector-icons/issues/26)). If you find yourself needing an icon in the form of an image rather than text, you should generate that image yourself and bundle it with your app.
 
 ## Resources
 
 - [@expo/vector-icons directory](https://expo.github.io/vector-icons/) - a searchable list of all included icons.
+- [Font Awesome 5 icons directory](https://fontawesome.com/icons) - all Font Awesome 5 icons (including the Pro icons)
   ![Screenshot of website](https://raw.githubusercontent.com/expo/vector-icons/master/website-screenshot.png)
 - [Expo documentation](https://docs.expo.io/)
 
@@ -15,8 +16,8 @@ This library is a compatibility layer around [@oblador/react-native-vector-icons
 This library is part of the `expo` package, so if you are using `expo` you can simply use it like so
 
 ```tsx
-import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
+import React from "react";
+import { Ionicons } from "@expo/vector-icons";
 
 export default class IconExample extends React.Component {
   render() {
@@ -25,31 +26,33 @@ export default class IconExample extends React.Component {
 }
 ```
 
-## Upgrading to FontAwesome5 Pro
+for more usage see [Expo icons documentation](https://docs.expo.io/guides/icons/)
 
-In order to you use the FontAwesome 5 Pro icons, you will need to download the Pro fonts.
+## Maintainers
 
-First you need your FontAwesome npm token which can be obtained by logging into your account and then access the Services tab.
+### How to upgrade the react-native-vector-icons version
 
-Next, configure @fortawesome scope to use the correct server address and your token, as described [here](https://fontawesome.com/how-to-use/on-the-web/setup/using-package-managers#installing-pro).
+I'll be honest with you, it's not straightforward. You should set aside about an hour to do this.
 
-Finally, run `cd node_modules/@expo/vector-icons && npm run fa5pro` to download and install the fonts.
+1. Clone [react-native-vector-icons](https://github.com/oblador/react-native-vector-icons)
+2. Copy files from the cloned directory into `src/vendor/react-native-vector-icons`, except the dotfiles.
+3. Run `git status` and look at the untracked files. Remove anything that doesn't seem needed. For example, remove package.json, react-native.config.js, react-native.osx.js. Things to look out for are new icon fonts or new `create-*` files.
+4. Run `git diff **/*.js` - do any of the changes look like they should be synced over to the equivalent `.ts` files in `src`?/
 
-If you already had @fortawesome configured (via an `.npmrc` file or by using `npm config set`) before you installed this package, the fonts will already have been installed.
+- ToolBarAndroid and TabBarIOS are not included in @expo/vector-icons
+- Neither are the native vendor font loading or image source related methods.
+- Probably there won't be anything important. The main thing to look out for are user-facing API changes, the `@expo/vector-icons` internals are different enough that you don't need to worry about it.
+- Were any dependencies added? Check imports against those in the current package.json, see why they were added - maybe they support the `bin` scripts, in which case we need them.
+- TypeScript/Flow types for Icon/Icon.Button components may need to be updated.
 
-Use FontAwesome5Pro icons like so
+5. Run `yarn` when you're done and it'll copy vendor files over to build.
+6. Go to the website directory, test it out by changing the `@expo/vector-icons` version to `"../"` (TODO: investigate this quirk!). If new icons were added, ensure that they work here.
 
-```tsx
-import React from 'react';
-import { FontAwesome5Pro } from '@expo/vector-icons';
+- While you're here, it would be kind of you to update the Expo SDK version to latest.
 
-export default class IconExample extends React.Component {
-  render() {
-    return (
-      <FontAwesome5Pro light name="check-square" size={32} color="green" />
-    );
-  }
-}
-```
+7. Publish an alpha release, switch back the version in the website to that version.
+8. Open a PR, have someone else like @brentvatne look at it. If it's good to go, publish the final version, update the website version again, then merge. The website will be deployed when you merge to master.
 
-for more usage see [Expo icons documentation](https://docs.expo.io/versions/latest/guides/icons/)
+### How to deploy the website
+
+Create a commit on master.
