@@ -3,7 +3,7 @@ import glyphMap from './vendor/react-native-vector-icons/glyphmaps/FontAwesome5P
 import metadata from './vendor/react-native-vector-icons/glyphmaps/FontAwesome5Pro_meta.json';
 const fontMap = {
     Regular: require('../../../../assets/fonts/FontAwesome5_Pro_Regular.ttf'),
-    Light: require('../../../../assets/fonts/FontAwesome5_Pro_Light.ttf'),
+    Light: require('../../../../assets/fonts/Font Awesome 5 Pro-Light-300.otf'),
     Solid: require('../../../../assets/fonts/FontAwesome5_Pro_Solid.ttf'),
     Brand: require('../../../../assets/fonts/FontAwesome5_Pro_Brands.ttf'),
     Duotone: require('../../../../assets/fonts/FontAwesome5_Pro_Duotone.ttf')
